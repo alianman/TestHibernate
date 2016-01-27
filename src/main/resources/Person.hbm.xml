@@ -3,16 +3,31 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="by.st.test.hibernate">
+<hibernate-mapping package="by.st.hibernate.model">
 
-    <class name="by.st.hibernate.model.Person" table="PERSONS">
-
+    <class name="Person" table="PERSONS">
         <id name="id" type="java.lang.Long">
             <column name="ID" />
             <generator class="increment"/>
         </id>
         <property name="name" column="NAME"/>
         <property name="address" column="ADDRESS"/>
+        <component name="phoneNumber">
+            <property name="internationalCode" column="INTERNATIONAL_CODE"/>
+            <property name="providerCode" column="PROVIDER_CODE"/>
+            <property name="phoneNumber" column="PHONE_NUMBER"/>
+        </component>
     </class>
+
+    <joined-subclass name="Driver" extends="Person">
+        <key column="ID"/>
+        <property name="licenseNumber" column="LICENSE"/>
+        <property name="carModel" column="CAR_MODEL"/>
+    </joined-subclass>
+    <joined-subclass name="Doctor" extends="Person">
+        <key column="ID"/>
+        <property name="specializationName" column="SPEC_NAME"/>
+        <property name="hospitalName" column="HOSPITAL_NAME"/>
+    </joined-subclass>
 
 </hibernate-mapping>

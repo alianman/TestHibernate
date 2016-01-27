@@ -9,6 +9,7 @@ public class Person implements Serializable {
     private long id;
     private String name;
     private String address;
+    private PhoneNumber phoneNumber;
 
     public Person(int id, String name, String address) {
         this.id = id;
@@ -19,6 +20,12 @@ public class Person implements Serializable {
     public Person(String name, String address) {
         this.name = name;
         this.address = address;
+    }
+
+    public Person(String name, String address, PhoneNumber phoneNumber) {
+        this.name = name;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
     }
 
     public Person() {
@@ -48,6 +55,14 @@ public class Person implements Serializable {
         this.address = address;
     }
 
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -57,7 +72,9 @@ public class Person implements Serializable {
 
         if (getId() != person.getId()) return false;
         if (getName() != null ? !getName().equals(person.getName()) : person.getName() != null) return false;
-        return !(getAddress() != null ? !getAddress().equals(person.getAddress()) : person.getAddress() != null);
+        if (getAddress() != null ? !getAddress().equals(person.getAddress()) : person.getAddress() != null)
+            return false;
+        return !(getPhoneNumber() != null ? !getPhoneNumber().equals(person.getPhoneNumber()) : person.getPhoneNumber() != null);
 
     }
 
@@ -66,6 +83,7 @@ public class Person implements Serializable {
         int result = (int) (getId() ^ (getId() >>> 32));
         result = 31 * result + (getName() != null ? getName().hashCode() : 0);
         result = 31 * result + (getAddress() != null ? getAddress().hashCode() : 0);
+        result = 31 * result + (getPhoneNumber() != null ? getPhoneNumber().hashCode() : 0);
         return result;
     }
 }
