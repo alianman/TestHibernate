@@ -5,7 +5,18 @@
     <groupId>by.st.hibernate</groupId>
     <artifactId>TestHibernate</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
+    <modules>
+        <module>Hibernate utils</module>
+        <module>Simple person</module>
+        <module>Generate keys</module>
+        <module>Inheritance</module>
+        <module>Inheritance discriminator</module>
+        <module>Inheritance join</module>
+        <module>Inheritance union</module>
+        <module>Relations one-to-one</module>
+        <module>Relations one-to-many many-to-one</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <name>TestHibernate</name>
     <url>http://maven.apache.org</url>

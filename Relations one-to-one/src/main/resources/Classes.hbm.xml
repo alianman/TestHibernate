@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="by.st.hibernate.model">
+
+    <class name="Person">
+        <id name="id" type="java.lang.Long">
+            <generator class="native"/>
+        </id>
+        <property name="name"/>
+        <one-to-one name="position" class="PersonPosition" cascade="delete"/>
+    </class>
+
+    <class name="PersonPosition">
+        <id name="personId">
+            <generator class="foreign">
+                <param name="property">person</param>
+            </generator>
+        </id>
+        <one-to-one name="person" class="Person" constrained="true" cascade="delete"/>
+        <property name="x" type="java.lang.Double"/>
+        <property name="y" type="java.lang.Double"/>
+    </class>
+
+</hibernate-mapping>

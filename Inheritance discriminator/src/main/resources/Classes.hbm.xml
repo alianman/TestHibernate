@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="by.st.hibernate.model">
+
+    <class name="Person" discriminator-value="PR">
+        <id name="id" type="java.lang.Long">
+            <generator class="native"/>
+        </id>
+        <discriminator type="string" column="TYPE"/>
+        <property name="name"/>
+        <property name="address"/>
+        <component name="phoneNumber">
+            <property name="internationalCode"/>
+            <property name="providerCode"/>
+            <property name="phoneNumber"/>
+        </component>
+    </class>
+
+    <subclass name="Driver" extends="Person" discriminator-value="DR">
+        <property name="licenseNumber"/>
+        <property name="carModel"/>
+    </subclass>
+    <subclass name="Doctor" extends="Person" discriminator-value="DC">
+        <property name="specializationName"/>
+        <property name="hospitalName"/>
+    </subclass>
+
+</hibernate-mapping>
