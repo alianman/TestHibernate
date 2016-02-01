@@ -12,13 +12,13 @@
         <property name="name"/>
 
         <set name="books" inverse="true" sort="unsorted">
-            <key column="F_PERSON_ID" not-null="true"/>
+            <key column="F_ID" not-null="true"/>
             <one-to-many class="Book"/>
         </set>
     </class>
 
-    <class name="Book">
-        <id name="id">
+    <class name="Book" >
+        <id name="id" type="java.lang.Long">
             <generator class="native"/>
         </id>
         <property name="title"/>

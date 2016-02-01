@@ -7,13 +7,13 @@
     <version>1.0</version>
     <modules>
         <module>Hibernate utils</module>
-        <module>Simple person</module>
+<!--        <module>Simple person</module>
         <module>Generate keys</module>
         <module>Inheritance</module>
         <module>Inheritance discriminator</module>
         <module>Inheritance join</module>
         <module>Inheritance union</module>
-        <module>Relations one-to-one</module>
+        <module>Relations one-to-one</module>-->
         <module>Relations one-to-many many-to-one</module>
     </modules>
     <packaging>pom</packaging>
