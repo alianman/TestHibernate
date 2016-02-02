@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="by.st.hibernate.model">
+
+    <class name="Car">
+        <id name="id" type="java.lang.Long">
+            <generator class="native"/>
+        </id>
+        <property name="model"/>
+
+        <set name="serviceStations" table="T_CARS_SERVICES_HISTORY" cascade="all"
+                inverse="true" fetch="select">
+            <key column="F_CAR_ID" not-null="true"/>
+            <many-to-many column="F_SERVICE_STATION_ID" class="ServiceStation"/>
+        </set>
+    </class>
+
+    <class name="ServiceStation" >
+        <id name="id" type="java.lang.Long">
+            <generator class="native"/>
+        </id>
+        <property name="name"/>
+
+        <set name="cars" table="T_CARS_SERVICES_HISTORY" cascade="all"
+                inverse="false" fetch="select">
+            <key column="F_SERVICE_STATION_ID" not-null="true"/>
+            <many-to-many column="F_CAR_ID" class="Car"/>
+        </set>
+    </class>
+
+</hibernate-mapping>

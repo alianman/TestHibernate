@@ -36,7 +36,9 @@ public class BookRelationsTest extends Assert {
         testPerson = new Person("Alexei Petkevich");
         testBooksList = new HashSet<Book>();
         for (int i = 0, size = 10; i < size; i++) {
-            testBooksList.add(new Book("title " + (i + 1)));
+            Book newBook = new Book("title " + (i + 1));
+            newBook.setReader(testPerson);
+            testBooksList.add(newBook);
         }
         testPerson.setBooks(testBooksList);
     }
@@ -52,8 +54,25 @@ public class BookRelationsTest extends Assert {
         session.getTransaction().commit();
 
         assertEquals(testPerson, extracted);
+        assertFalse(extracted.getBooks().isEmpty());
 
-        assertTrue(extracted.getBooks().contains(new Book("title 1")));
+        for (Book book : extracted.getBooks()) {
+            System.out.println(book.getTitle() + " " + book.getReader().getName());
+        }
+
+        int size = extracted.getBooks().size();
+
+        testPerson.getBooks().add(new Book("test", testPerson));
+
+        session.beginTransaction();
+        session.update(testPerson);
+        session.getTransaction().commit();
+
+        session.beginTransaction();
+        extracted = (Person) session.get(Person.class, testPerson.getId());
+        session.getTransaction().commit();
+
+        assertEquals(size + 1, extracted.getBooks().size());
     }
 
     @After

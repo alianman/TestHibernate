@@ -15,6 +15,11 @@ public class Book {
         this.title = title;
     }
 
+    public Book(String title, Person reader) {
+        this.title = title;
+        this.reader = reader;
+    }
+
     public long getId() {
         return id;
     }
