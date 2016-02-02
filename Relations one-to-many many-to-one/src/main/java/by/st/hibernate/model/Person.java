@@ -1,5 +1,6 @@
 package by.st.hibernate.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Set;
 public class Person {
     private long id;
     private String name;
-    private Set<Book> books;
+    private Set<Book> books = new HashSet<Book>();
 
     public Person() {
     }

@@ -23,6 +23,7 @@ public class HibernateUtils {
             serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
             ourSessionFactory = configuration.buildSessionFactory(serviceRegistry);
         } catch (Throwable ex) {
+            ex.printStackTrace();
             throw new ExceptionInInitializerError(ex);
         }
     }
