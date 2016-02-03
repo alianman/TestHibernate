@@ -11,7 +11,7 @@
         </id>
         <property name="name"/>
 
-        <set name="books" inverse="true" cascade="delete">
+        <set name="books" inverse="true" cascade="all">
             <key column="F_PERSON_ID" not-null="true"/>
             <one-to-many class="Book"/>
         </set>
@@ -22,7 +22,7 @@
             <generator class="native"/>
         </id>
         <property name="title"/>
-        <many-to-one name="reader" class="Person" column="F_PERSON_ID" not-null="true" cascade="delete"/>
+        <many-to-one name="reader" class="Person" column="F_PERSON_ID" not-null="true" cascade="all"/>
     </class>
 
 </hibernate-mapping>

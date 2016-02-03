@@ -16,8 +16,11 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class CarRelationsTest extends Assert {
     private static Session session;
-    private static Set<Car> cars = new HashSet<Car>();
-    private static Set<ServiceStation> serviceStations = new HashSet<ServiceStation>();
+
+    private static Car car1 = new Car("test car 1");
+    private static Car car2 = new Car("test car 2");
+    private static ServiceStation serviceStation1 = new ServiceStation("service 1");
+    private static ServiceStation serviceStation2 = new ServiceStation("service 2");
 
 
     @Before
@@ -31,40 +34,113 @@ public class CarRelationsTest extends Assert {
 
     @Before
     public void createCars() {
-
-        int carsCount = HibernateUtils.getRandomIn(1, 50);
-        int servicesCount = HibernateUtils.getRandomIn(1, 6);
-
-        for (int i = 0; i < carsCount; i++) {
-            cars.add(new Car("car #" + (i + 1)));
-        }
-        for (int i = 0; i < servicesCount; i++) {
-            serviceStations.add(new ServiceStation("service station #" + (i + 1)));
-        }
-
-        for (Car car : cars) {
-            Set<ServiceStation> carServices = new HashSet<ServiceStation>();
-            ServiceStation[] serviceStationsArray = serviceStations.toArray(new ServiceStation[serviceStations.size()]);
-            int serviceCount = HibernateUtils.getRandomIn(0, servicesCount);
-            for (int i = 0; i < serviceCount; i++) {
-                ServiceStation serviceStation = serviceStationsArray[HibernateUtils.getRandomIn(0, serviceStationsArray.length - 1)];
-                serviceStation.getCars().add(car);
-                carServices.add(serviceStation);
-            }
-            car.setServiceStations(carServices);
-        }
+        car1.setServiceStations(new HashSet<ServiceStation>());
+        car1.getServiceStations().add(serviceStation1);
+        car1.getServiceStations().add(serviceStation2);
+        serviceStation1.setCars(new HashSet<Car>());
+        serviceStation1.getCars().add(car1);
+        serviceStation1.getCars().add(car2);
+        serviceStation2.setCars(new HashSet<Car>());
+        serviceStation2.getCars().add(car1);
+        car2.setServiceStations(new HashSet<ServiceStation>());
+        car2.getServiceStations().add(serviceStation1);
     }
 
     @Test
-    public void testCarsRelations() {
+    public void testCarsRelations_get() {
         session.beginTransaction();
-        for (Car car : cars) {
-            session.save(car);
-        }
-        for (ServiceStation serviceStation : serviceStations) {
-            session.save(serviceStation);
-        }
+        session.save(car1);
         session.getTransaction().commit();
+
+        session.clear();
+
+        session.beginTransaction();
+        Car extracted = (Car) session.get(Car.class, car1.getId());
+        session.getTransaction().commit();
+
+        assertEquals(2, extracted.getServiceStations().size());
+
+        session.beginTransaction();
+        extracted = (Car) session.get(Car.class, car2.getId());
+        session.getTransaction().commit();
+
+        assertEquals(1, extracted.getServiceStations().size());
+
+        for (Car car : serviceStation2.getCars()) {
+            car.getServiceStations().remove(serviceStation2);
+            session.update(car);
+        }
+        session.delete(serviceStation2);
+        for (Car car : serviceStation1.getCars()) {
+            car.getServiceStations().remove(serviceStation1);
+            session.update(car);
+        }
+        session.delete(serviceStation1);
+    }
+
+    @Test
+    public void testCarsRelations_update() {
+        session.beginTransaction();
+        session.save(car1);
+        session.getTransaction().commit();
+
+        int size = car2.getServiceStations().size();
+        ServiceStation serviceStation = new ServiceStation("test service 3");
+        serviceStation.setCars(new HashSet<Car>());
+        serviceStation.getCars().add(car2);
+        car2.getServiceStations().add(serviceStation);
+
+        session.beginTransaction();
+        session.update(car2);
+        session.getTransaction().commit();
+
+        session.clear();
+
+        session.beginTransaction();
+        Car extracted = (Car) session.get(Car.class, car2.getId());
+        session.getTransaction().commit();
+
+        assertEquals(size + 1, extracted.getServiceStations().size());
+
+        for (Car car : serviceStation2.getCars()) {
+            car.getServiceStations().remove(serviceStation2);
+            session.update(car);
+        }
+        session.delete(serviceStation2);
+        for (Car car : serviceStation1.getCars()) {
+            car.getServiceStations().remove(serviceStation1);
+            session.update(car);
+        }
+        session.delete(serviceStation1);
+    }
+
+    @Test
+    public void testCarsRelations_delete() {
+        session.beginTransaction();
+        session.save(car1);
+        session.getTransaction().commit();
+
+        session.beginTransaction();
+        for (Car car : serviceStation2.getCars()) {
+            car.getServiceStations().remove(serviceStation2);
+            session.update(car);
+        }
+        session.delete(serviceStation2);
+        session.getTransaction().commit();
+
+        session.clear();
+
+        session.beginTransaction();
+        Car extracted = (Car) session.get(Car.class, serviceStation2.getId());
+        session.getTransaction().commit();
+
+        assertNull(extracted);
+
+        for (Car car : serviceStation1.getCars()) {
+            car.getServiceStations().remove(serviceStation1);
+            session.update(car);
+        }
+        session.delete(serviceStation1);
     }
 
     @After

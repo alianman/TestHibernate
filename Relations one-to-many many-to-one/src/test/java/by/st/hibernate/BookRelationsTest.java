@@ -3,6 +3,7 @@ package by.st.hibernate;
 import by.st.hibernate.model.Book;
 import by.st.hibernate.model.Person;
 import by.st.hibernate.utils.HibernateUtils;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Assert;
@@ -44,23 +45,27 @@ public class BookRelationsTest extends Assert {
     }
 
     @Test
-    public void testBooksRelation() {
+    public void testBooksRelation_get() {
         session.beginTransaction();
         session.save(testPerson);
         session.getTransaction().commit();
+
+        session.evict(testPerson);
 
         session.beginTransaction();
         Person extracted = (Person) session.get(Person.class, testPerson.getId());
         session.getTransaction().commit();
 
-        assertEquals(testPerson, extracted);
-        assertFalse(extracted.getBooks().isEmpty());
+        assertEquals(testPerson.getBooks().size(), extracted.getBooks().size());
+    }
 
-        for (Book book : extracted.getBooks()) {
-            System.out.println(book.getTitle() + " " + book.getReader().getName());
-        }
+    @Test
+    public void testBooksRelation_update() {
+        session.beginTransaction();
+        session.save(testPerson);
+        session.getTransaction().commit();
 
-        int size = extracted.getBooks().size();
+        int size = testPerson.getBooks().size();
 
         testPerson.getBooks().add(new Book("test", testPerson));
 
@@ -68,11 +73,33 @@ public class BookRelationsTest extends Assert {
         session.update(testPerson);
         session.getTransaction().commit();
 
+        session.evict(testPerson);
+
         session.beginTransaction();
-        extracted = (Person) session.get(Person.class, testPerson.getId());
+        Person extracted = (Person) session.get(Person.class, testPerson.getId());
+        Hibernate.initialize(extracted);
         session.getTransaction().commit();
 
         assertEquals(size + 1, extracted.getBooks().size());
+    }
+
+    @Test
+    public void testBooksRelation_delete() {
+        session.beginTransaction();
+        session.save(testPerson);
+        session.getTransaction().commit();
+
+        session.beginTransaction();
+        session.delete(testPerson);
+        session.getTransaction().commit();
+
+        session.evict(testPerson);
+
+        session.beginTransaction();
+        Person extracted = (Person) session.get(Person.class, testPerson.getId());
+        session.getTransaction().commit();
+
+        assertNull(extracted);
     }
 
     @After

@@ -11,7 +11,7 @@
         </id>
         <property name="model"/>
 
-        <set name="serviceStations" table="T_CARS_SERVICES_HISTORY" cascade="all"
+        <set name="serviceStations" table="T_CARS_SERVICES_HISTORY" cascade="all-delete-orphan"
                 inverse="true" fetch="select">
             <key column="F_CAR_ID" not-null="true"/>
             <many-to-many column="F_SERVICE_STATION_ID" class="ServiceStation"/>
@@ -24,7 +24,7 @@
         </id>
         <property name="name"/>
 
-        <set name="cars" table="T_CARS_SERVICES_HISTORY" cascade="all"
+        <set name="cars" table="T_CARS_SERVICES_HISTORY" cascade="all-delete-orphan"
                 inverse="false" fetch="select">
             <key column="F_SERVICE_STATION_ID" not-null="true"/>
             <many-to-many column="F_CAR_ID" class="Car"/>
