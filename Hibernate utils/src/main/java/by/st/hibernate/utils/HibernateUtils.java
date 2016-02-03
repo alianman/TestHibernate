@@ -31,4 +31,8 @@ public class HibernateUtils {
     public static Session getSession() throws HibernateException {
         return ourSessionFactory.openSession();
     }
+
+    public static int getRandomIn(int min, int max) {
+        return min + (int)(Math.random() * ((max - min) + 1));
+    }
 }

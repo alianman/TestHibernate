@@ -13,9 +13,9 @@
         <module>Inheritance discriminator</module>
         <module>Inheritance join</module>
         <module>Inheritance union</module>
-        <module>Relations one-to-one</module>
-        <module>Relations one-to-many many-to-one</module>-->
-        <module>Relations many-to-many</module>
+        <module>Relations one-to-one</module>-->
+        <module>Relations one-to-many many-to-one</module>
+<!--        <module>Relations many-to-many</module>-->
     </modules>
     <packaging>pom</packaging>
 

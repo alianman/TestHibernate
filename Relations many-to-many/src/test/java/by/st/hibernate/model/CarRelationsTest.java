@@ -19,9 +19,6 @@ public class CarRelationsTest extends Assert {
     private static Set<Car> cars = new HashSet<Car>();
     private static Set<ServiceStation> serviceStations = new HashSet<ServiceStation>();
 
-    private static int getRandomIn(int min, int max) {
-        return min + (int)(Math.random() * ((max - min) + 1));
-    }
 
     @Before
     public void openSession() {
@@ -35,8 +32,8 @@ public class CarRelationsTest extends Assert {
     @Before
     public void createCars() {
 
-        int carsCount = getRandomIn(1, 50);
-        int servicesCount = getRandomIn(1, 6);
+        int carsCount = HibernateUtils.getRandomIn(1, 50);
+        int servicesCount = HibernateUtils.getRandomIn(1, 6);
 
         for (int i = 0; i < carsCount; i++) {
             cars.add(new Car("car #" + (i + 1)));
@@ -48,9 +45,9 @@ public class CarRelationsTest extends Assert {
         for (Car car : cars) {
             Set<ServiceStation> carServices = new HashSet<ServiceStation>();
             ServiceStation[] serviceStationsArray = serviceStations.toArray(new ServiceStation[serviceStations.size()]);
-            int serviceCount = getRandomIn(0, servicesCount);
+            int serviceCount = HibernateUtils.getRandomIn(0, servicesCount);
             for (int i = 0; i < serviceCount; i++) {
-                ServiceStation serviceStation = serviceStationsArray[getRandomIn(0, serviceStationsArray.length - 1)];
+                ServiceStation serviceStation = serviceStationsArray[HibernateUtils.getRandomIn(0, serviceStationsArray.length - 1)];
                 serviceStation.getCars().add(car);
                 carServices.add(serviceStation);
             }
