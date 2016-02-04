@@ -19,6 +19,11 @@ public class ServiceStation {
         this.name = name;
     }
 
+    public ServiceStation(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public long getId() {
         return id;
     }
