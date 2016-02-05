@@ -8,7 +8,7 @@
         <property name="connection.url">jdbc:mysql://localhost:3306/relations_many_to_many</property>
         <property name="connection.username">root</property>
         <property name="connection.password">root</property>
-        <property name="hbm2ddl.auto">create-drop</property>
+        <property name="hbm2ddl.auto">create</property>
         <property name="show_sql">true</property>
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hbm2ddl.auto">update</property> -->
