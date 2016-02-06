@@ -1,14 +1,26 @@
 package by.st.hibernate.model;
 
+import com.sun.istack.internal.NotNull;
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by alian on 02.02.2016.
  */
+@Entity
 public class ServiceStation {
+
+    @Id
+    @GeneratedValue
     private long id;
+
+    @Column
     private String name;
+
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "serviceStations", targetEntity = Car.class)
+    @NotNull
     private Set<Car> cars = new HashSet<Car>();
 
 
@@ -55,15 +67,8 @@ public class ServiceStation {
 
         ServiceStation that = (ServiceStation) o;
 
-        if (getId() != that.getId()) return false;
-        return !(getName() != null ? !getName().equals(that.getName()) : that.getName() != null);
+        if (id != that.id) return false;
+        return name.equals(that.name);
 
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (getId() ^ (getId() >>> 32));
-        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
-        return result;
     }
 }

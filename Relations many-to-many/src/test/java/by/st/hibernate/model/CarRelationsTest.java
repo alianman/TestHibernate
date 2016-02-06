@@ -9,13 +9,9 @@ import java.util.HashSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-
 /**
  * Created by alian on 02.02.2016.
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CarRelationsTest extends Assert {
     private static Session session;
     protected static final Logger logger = LogManager.getLogger(CarRelationsTest.class);
@@ -26,6 +22,7 @@ public class CarRelationsTest extends Assert {
     private static ServiceStation serviceStation2 = new ServiceStation("service 2");
 
 
+    @Before
     public void openSession() {
         try {
             session = HibernateUtils.getSession();
@@ -41,25 +38,32 @@ public class CarRelationsTest extends Assert {
         car1.getServiceStations().add(serviceStation2);
         serviceStation1.setCars(new HashSet<Car>());
         serviceStation1.getCars().add(car1);
-        //serviceStation1.getCars().add(car2);
+        serviceStation1.getCars().add(car2);
         serviceStation2.setCars(new HashSet<Car>());
         serviceStation2.getCars().add(car1);
-/*        car2.setServiceStations(new HashSet<ServiceStation>());
-        car2.getServiceStations().add(serviceStation1);*/
+        car2.setServiceStations(new HashSet<ServiceStation>());
+        car2.getServiceStations().add(serviceStation1);
+    }
+
+    public void clearCars() {
+        car1.setId(0);
+        car2.setId(0);
+        serviceStation1.setId(0);
+        serviceStation2.setId(0);
     }
 
     @Test
     public void testCarsRelations_get() {
-        session = HibernateUtils.getSession();
+        clearCars();
         session.beginTransaction();
-        session.saveOrUpdate(car1);
+        session.save(car1);
         session.getTransaction().commit();
 
         logger.info("Inserted cars and stations");
 
         //session.clear();
 
-/*        logger.info("Extracting car1 with id = " + car1.getId() + "...");
+        logger.info("Extracting car1 with id = " + car1.getId() + "...");
         session.beginTransaction();
         Car extracted = (Car) session.get(Car.class, car1.getId());
         session.getTransaction().commit();
@@ -77,74 +81,19 @@ public class CarRelationsTest extends Assert {
 
         logger.info("Extracting car2 services...");
         assertEquals(1, extracted.getServiceStations().size());
-        logger.info("Done!");*/
+        logger.info("Done!");
 
         logger.info("Deleting cars and stations...");
         session.beginTransaction();
         session.delete(serviceStation1);
-        session.delete(serviceStation2);
         session.getTransaction().commit();
         logger.info("Done!");
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        session.close();
     }
 
-    @Test
-    public void testCarsRelations_oooo() {
-        session = HibernateUtils.getSession();
-        session.beginTransaction();
-        session.saveOrUpdate(car1);
-        session.getTransaction().commit();
-
-        logger.info("Inserted cars and stations");
-
-        //session.clear();
-
-/*        logger.info("Extracting car1 with id = " + car1.getId() + "...");
-        session.beginTransaction();
-        Car extracted = (Car) session.get(Car.class, car1.getId());
-        session.getTransaction().commit();
-        logger.info("Done!");
-
-        logger.info("Extracting car1 services...");
-        assertEquals(2, extracted.getServiceStations().size());
-        logger.info("Done!");
-
-        logger.info("Extracting car2 with id = " + car2.getId() + "...");
-        session.beginTransaction();
-        extracted = (Car) session.get(Car.class, car2.getId());
-        session.getTransaction().commit();
-        logger.info("Done!");
-
-        logger.info("Extracting car2 services...");
-        assertEquals(1, extracted.getServiceStations().size());
-        logger.info("Done!");*/
-
-        logger.info("Deleting cars and stations...");
-        session.beginTransaction();
-        session.delete(serviceStation1);
-        session.delete(serviceStation2);
-        session.getTransaction().commit();
-        logger.info("Done!");
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        session.close();
-    }
-
-    @Ignore
     @Test
     public void testCarsRelations_update() {
+        clearCars();
 
-        session = HibernateUtils.getSession();
         session.beginTransaction();
         session.saveOrUpdate(car1);
         session.getTransaction().commit();
@@ -168,67 +117,63 @@ public class CarRelationsTest extends Assert {
         assertEquals(size + 1, car2.getServiceStations().size());
 
         serviceStation.getCars().clear();
-        car2.getServiceStations().clear();
-        car2.getServiceStations().add(serviceStation2);
+        car2.getServiceStations().remove(serviceStation);
 
         logger.info("Removing new service station...");
 
         logger.info("Updating car 2...");
         session.beginTransaction();
         session.update(car2);
-        session.delete(serviceStation);
         session.getTransaction().commit();
         logger.info("Update complete!");
 
         assertEquals(size, car2.getServiceStations().size());
-/*        session.clear();
+
+        session.clear();
 
         session.beginTransaction();
         Car extracted = (Car) session.get(Car.class, car2.getId());
         session.getTransaction().commit();
 
-        assertEquals(size + 1, extracted.getServiceStations().size());*/
+        assertEquals(size, extracted.getServiceStations().size());
 
         logger.info("Deleting cars and stations...");
         session.beginTransaction();
-        session.delete(car1);
+        session.delete(extracted);
         session.getTransaction().commit();
         logger.info("Deleted!");
-        session.close();
     }
 
-    @Ignore
     @Test
     public void testCarsRelations_delete() {
+        clearCars();
         session.beginTransaction();
         session.save(car1);
         session.getTransaction().commit();
 
+        logger.info("Deleting " + serviceStation2.getName() + " station...");
         session.beginTransaction();
-        for (Car car : serviceStation2.getCars()) {
-            car.getServiceStations().remove(serviceStation2);
-            session.update(car);
-        }
+        car1.getServiceStations().remove(serviceStation2);
+        car2.getServiceStations().remove(serviceStation2);
+        serviceStation2.setCars(null);
         session.delete(serviceStation2);
         session.getTransaction().commit();
+        logger.info("Done!");
 
-/*        session.clear();
+        session.clear();
 
         session.beginTransaction();
-        Car extracted = (Car) session.get(Car.class, serviceStation2.getId());
+        ServiceStation extracted = (ServiceStation) session.get(ServiceStation.class, serviceStation2.getId());
         session.getTransaction().commit();
 
         assertNull(extracted);
 
         session.beginTransaction();
-        for (Car car : serviceStation1.getCars()) {
-            car.getServiceStations().remove(serviceStation1);
-            session.update(car);
-        }
-        session.delete(serviceStation1);
-        session.getTransaction().commit();*/
+        session.delete(car1);
+        session.getTransaction().commit();
     }
 
+    @After
     public void closeSession() {
         session.close();
     }

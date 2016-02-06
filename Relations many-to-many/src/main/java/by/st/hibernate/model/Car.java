@@ -1,14 +1,29 @@
 package by.st.hibernate.model;
 
+import com.sun.istack.internal.NotNull;
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by alian on 02.02.2016.
  */
+@Entity
 public class Car {
+
+    @Id
+    @GeneratedValue
     private long id;
+
+    @Column
     private String model;
+
+    @ManyToMany(cascade = CascadeType.ALL, targetEntity = ServiceStation.class)
+    @JoinTable(name = "T_CARS_SERVICES_HISTORY",
+            joinColumns=@JoinColumn(name="F_CAR_ID"),
+            inverseJoinColumns=@JoinColumn(name="F_SERVICE_STATION_ID"))
+    @NotNull
     private Set<ServiceStation> serviceStations = new HashSet<ServiceStation>();
 
     public Car() {
